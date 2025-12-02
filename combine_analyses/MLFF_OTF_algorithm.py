@@ -116,6 +116,4 @@ Extended Version (With Temperature Control, Logging)
 	•	Log prediction type per frame (ML or DFT).
 	•	Include time estimation and parallel batching for DFT jobs.
 
-⸻
 
-Let me know if you want any of this adapted for a specific MLFF library (e.g., DeePMD-kit, GAP, NequIP) or platform (LAMMPS, ASE).
