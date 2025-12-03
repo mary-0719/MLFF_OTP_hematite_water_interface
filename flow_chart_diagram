@@ -1,0 +1,68 @@
+[Start] --> [Initialize model and counters]
+   --> [Predict E, F, S, U via MLFF]
+   --> [Is U < threshold?]
+        |Yes| --> [Use MLFF forces] --> [Propagate] --> [i += 1] --> [i < N_MD?]-->|Yes| back to Predict
+        | No|
+           v
+     [Run DFT calculation]
+           |
+   [Add to reference dataset]
+           |
+   [Need retraining?]-->|Yes|-->[Retrain MLFF]
+           |No                         |
+           v                          v
+       [Use DFT forces] --> [Propagate] --> [i += 1] --> [i < N_MD?]-->|Yes| back to Predict
+                                                          |
+                                                       [No]
+                                                         v
+                                                   [Terminate]
+
+
+Flowchart Breakdown to Practical Steps
+
+1. [Start] → [Initialize model and counters]
+        •       Load or initialize your ML force field (e.g., GAP, DeePMD, MACE).
+        •       Set i = 0 (MD step counter), N_MD = total MD steps.
+        •       Initialize thresholds: uncertainty threshold U_thresh, retraining criteria.
+
+2. [Predict E, F, S, U via MLFF]
+        •       For the current atomic structure:
+        •       Predict energy (E), forces (F), stress (S), and uncertainty (U) using the ML model.
+        •       Most frameworks return uncertainty as a standard deviation or committee-based variance.
+
+3. [Is U < threshold?]
+        •       If uncertainty U < U_thresh, proceed with MLFF prediction.
+        •       If not, call DFT to get reliable ground-truth data.
+
+Path A: U < threshold
+[Use MLFF forces] → [Propagate]
+        •       Use MLFF forces to integrate equations of motion (e.g., via Velocity Verlet).
+        •       Update atomic positions and velocities.
+
+[i += 1] → [i < N_MD?]
+        •       Increment step.
+        •       If not finished, loop back to step 2.
+
+⸻
+
+Path B: U ≥ threshold
+[Run DFT calculation] → [Add to reference dataset]
+        •       Perform a DFT calculation (e.g., VASP) for the current frame.
+        •       Add structure + E/F/S to the reference dataset (X, y).
+
+[Need retraining?]
+        •       Decide based on number of new points, diversity, or max uncertainty.
+        •       Example: Retrain if len(new_data) ≥ retrain_threshold or max(U) > U_max.
+        •       If yes:
+        •       [Retrain MLFF]: retrain the model on the updated dataset.
+
+[Use DFT forces] → [Propagate]
+        •       For this step, use the DFT-computed forces instead of ML prediction.
+        •       Continue propagation and increment i.
+
+⸻
+
+[i < N_MD?]
+        •       Check if simulation is complete.
+        •       If yes, [Terminate]
+        •       If not, return to prediction.
