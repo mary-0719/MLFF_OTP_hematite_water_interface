@@ -1,3 +1,28 @@
+# ------------------------------------------------------------------------------
+# Script Name: mlff_otf_workflow.py
+# Description: On-the-fly machine learning force-field (MLFF) practical skeleton: 
+# ready for implementation with ASE + SLURM + DFT calls + retraining. 
+# Use this when building an actual OTF workflow with real structures 
+# for bulk, surface, and interfacial hematite–water simulations.
+# 
+# Author: [Mary Taiwo Ajide]
+# Affiliation: [University College Dublin]
+# Contact: [mary.ajide19@gmail.com]
+#
+# Created: [1st December 2025]
+# Last Updated: [3rd December 2025]
+#
+# Copyright © [2025] [Mary T. Ajide]. All rights reserved.
+#
+# This script is original work by the author. Unauthorised use, duplication,
+# or distribution without explicit permission is prohibited. Portions of this
+# code may be adapted or reused for research purposes with proper citation
+# and attribution.
+#
+# If used in scientific publications, please cite: [Mary T. Ajide], et al., "[Title]",
+# [Journal], [Year].
+# ------------------------------------------------------------------------------
+
 # mlff_otf_workflow.py
 # Minimal scaffold for on-the-fly MLFF with DFT fallback using SLURM
 
