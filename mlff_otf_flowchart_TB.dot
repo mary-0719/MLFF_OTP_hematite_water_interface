@@ -1,0 +1,43 @@
+digraph MLFF_OTF_Workflow {
+    rankdir=TB;
+    node [shape=rectangle, style=filled, fillcolor=white, fontname="Helvetica"];
+    edge [fontname="Helvetica"];
+
+    Start [label="Start", shape=oval, fillcolor=lightgrey];
+    Init [label="Initialize MLFF, thresholds, and counters"];
+
+    Predict [label="Predict E, F, S, U via MLFF"];
+    CheckU [label="Is U < U_thresh?", shape=diamond, fillcolor=lightyellow];
+
+    UseML [label="Use MLFF forces"];
+    PropML [label="Propagate positions & velocities\n(MLFF)"];
+    IncrementML [label="Increment i"];
+
+    UseDFT [label="Run DFT calculation"];
+    AddRef [label="Add to reference dataset"];
+    NeedRetrain [label="Retrain required?", shape=diamond, fillcolor=lightyellow];
+    Retrain [label="Retrain MLFF"];
+    UseDFTforces [label="Use DFT forces"];
+    PropDFT [label="Propagate positions & velocities\n(DFT)"];
+    IncrementDFT [label="Increment i"];
+
+    CheckDoneML [label="i < N_MD?", shape=diamond, fillcolor=lightyellow];
+    CheckDoneDFT [label="i < N_MD?", shape=diamond, fillcolor=lightyellow];
+    End [label="Terminate", shape=oval, fillcolor=lightgrey];
+
+    Start -> Init -> Predict -> CheckU;
+
+    CheckU -> UseML [label="Yes"];
+    UseML -> PropML -> IncrementML -> CheckDoneML;
+    CheckDoneML -> Predict [label="Yes"];
+    CheckDoneML -> End [label="No"];
+
+    CheckU -> UseDFT [label="No"];
+    UseDFT -> AddRef -> NeedRetrain;
+    NeedRetrain -> Retrain [label="Yes"];
+    Retrain -> UseDFTforces;
+    NeedRetrain -> UseDFTforces [label="No"];
+    UseDFTforces -> PropDFT -> IncrementDFT -> CheckDoneDFT;
+    CheckDoneDFT -> Predict [label="Yes"];
+    CheckDoneDFT -> End [label="No"];
+}
