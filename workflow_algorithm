@@ -1,0 +1,40 @@
+On-the-Fly Machine Learning Forcefield (MLFF) Generation Algorithm
+
+*********
+
+Formal Workflow Algorithm (Numbered Pseudocode)
+
+Input: Initial atomic configuration, initial MLFF, FP calculator (e.g., VASP), threshold values for uncertainty, max steps N_MD, update size N_update
+
+Output: Trained MLFF model and MD trajectory
+
+⸻
+
+        1.      Initialize:
+1.1 Load initial MLFF model and reference dataset.
+1.2 Set step counter i = 0.
+        2.      While i < N_MD, do:
+2.1 MLFF prediction:
+        •       Predict energy E_ML, forces F_ML, stress S_ML, and uncertainty U for current atomic configuration.
+2.2 Evaluate uncertainty:
+        •       If U < U_threshold:
+        •       Accept ML prediction.
+        •       Go to Step 2.5.
+        •       Else:
+        •       Proceed to Step 2.3.
+2.3 First-principles (FP) calculation:
+        •       Perform FP calculation (e.g., DFT) to obtain E_FP, F_FP, S_FP.
+        •       Store structure and FP data as a candidate sample.
+2.4 Dataset management and retraining:
+        •       If number of new samples >= N_update, or U > U_max:
+        •       Update reference dataset.
+        •       Retrain MLFF using updated data.
+2.5 Propagate dynamics:
+        •       If MLFF was used in Step 2.2:
+        •       Update positions/velocities using F_ML.
+        •       Else:
+        •       Update using F_FP.
+2.6 Increment step counter: i += 1
+2.7 Go back to Step 2.
+        3.      End loop:
+        •       Output trained MLFF model and MD trajectory.
